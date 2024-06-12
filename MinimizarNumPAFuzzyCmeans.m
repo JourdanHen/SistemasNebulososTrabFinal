@@ -2,7 +2,7 @@
 dadosClientes = readmatrix('clientes.csv');
 
 % Algoritmo Fuzzy C-Means
-function [PAs, cliente_PA, capacidadePA] = fuzzyCMeansClientes(dadosClientes, maxNumPAs, maxDistancia, maxCapacidadePA, gridResolution)
+function [PAs, cliente_PA, capacidadePA, tempoGasto] = fuzzyCMeansClientes(dadosClientes, maxNumPAs, maxDistancia, maxCapacidadePA, gridResolution)
     % Dados dos clientes
     xClientes = dadosClientes(:, 1);
     yClientes = dadosClientes(:, 2);
@@ -13,8 +13,12 @@ function [PAs, cliente_PA, capacidadePA] = fuzzyCMeansClientes(dadosClientes, ma
     melhorCliente_PA = [];
     melhorCapacidadePA = [];
     
+    
+    tic; % Iniciar a medição do tempo
+    
     % Iterar sobre o número de PAs possíveis
     for k = 1:maxNumPAs
+        
         [centros, U] = fcm([xClientes, yClientes], k);
         centrosQuantizados = round(centros / gridResolution) * gridResolution;
         
@@ -53,6 +57,8 @@ function [PAs, cliente_PA, capacidadePA] = fuzzyCMeansClientes(dadosClientes, ma
         end
     end
     
+    tempoGasto = toc; % Finalizar a medição do tempo
+    
     PAs = melhorPAs;
     cliente_PA = melhorCliente_PA;
     capacidadePA = melhorCapacidadePA;
@@ -65,9 +71,12 @@ maxCapacidadePA = 54;
 gridResolution = 5;
 
 % Chamar a função fuzzyCMeansClientes com dados dos clientes e parâmetros
-[PAs, cliente_PA, capacidadePA] = fuzzyCMeansClientes(dadosClientes, maxNumPAs, maxDistancia, maxCapacidadePA, gridResolution);
+[PAs, cliente_PA, capacidadePA, tempoGasto] = fuzzyCMeansClientes(dadosClientes, maxNumPAs, maxDistancia, maxCapacidadePA, gridResolution);
 
-% Visualizar a distribuição dos clientes 
+% Exibir tempo gasto
+fprintf('Tempo gasto: %.2f segundos\n', tempoGasto);
+
+% Visualizar a distribuição dos clientes
 figure;
 scatter(dadosClientes(:, 1), dadosClientes(:, 2), 'bo');
 hold on;
